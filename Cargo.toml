@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "cake_cli", 
+    "cake_lib"
+    ]
