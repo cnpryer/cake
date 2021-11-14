@@ -14,13 +14,15 @@
 // count of columns
 trait Frame {
     fn new(data: &Vec<String>) -> DataFrame;
-    fn len(&self) -> usize;
-    fn width(&self) -> usize;
+    fn get_header(&self) -> &Vec<String>;
+    fn get_rows(&self) -> &Vec<Vec<String>>;
 }
 
 pub struct DataFrame {
     header: Vec<String>,
     rows: Vec<Vec<String>>,
+    pub len: usize,
+    pub width: usize,
 }
 
 impl Frame for DataFrame {
@@ -31,26 +33,36 @@ impl Frame for DataFrame {
             return DataFrame {
                 header: Vec::new(),
                 rows: rows,
+                len: 0,
+                width: 0,
             };
         }
 
-        let header = data[0].split(",").map(|x| x.to_string()).collect();
+        let header: Vec<String> = data[0].split(",").map(|x| x.to_string()).collect();
 
         for r in data[1..].iter() {
             rows.push(r.split(",").map(|x| x.to_string()).collect())
         }
 
-        DataFrame { header, rows }
+        let len = rows.len();
+        let width = header.len();
+
+        DataFrame {
+            header,
+            rows,
+            len,
+            width,
+        }
     }
 
-    // get the number of rows in the dataframe
-    fn len(&self) -> usize {
-        self.rows.len()
+    // get header from datframe
+    fn get_header(&self) -> &Vec<String> {
+        &self.header
     }
 
-    // get the number of columns in the dataframe
-    fn width(&self) -> usize {
-        self.header.len()
+    // get rows from dataframe
+    fn get_rows(&self) -> &Vec<Vec<String>> {
+        &self.rows
     }
 }
 
@@ -63,7 +75,7 @@ mod tests {
         let data = vec!["a,b,c".to_string()];
         let df = DataFrame::new(&data);
 
-        assert_eq!(df.width(), 3);
-        assert_eq!(df.len(), 0)
+        assert_eq!(df.width, 3);
+        assert_eq!(df.len, 0)
     }
 }
