@@ -1,14 +1,25 @@
+// File
+//
+// Cake Files define file data structures and interfaces for interacting
+// with your files.
+//
+// The FileObject
+//
+// FileObjects are used to load files into interactive data structures. FileObjects
+// manage the file's data and metadata. Valid FileObjects are initialized with an
+// existing file with a compatible *filetype*.
+//
+// Compatible *filetypes*: csv
 use std::fs;
+
+const VALID_FILETYPE: &str = "csv";
 
 // The File
 trait File {
     fn new(path: &String) -> FileObject;
     fn is_valid(&self) -> bool;
     fn validate(&self);
-    fn get_path(&self) -> &String;
-    fn get_name(&self) -> &String;
-    fn get_type(&self) -> &String;
-    fn get_size(&self) -> &u32;
+    fn get_metadata(&self) -> &FileMetadata;
 
     // TODO: display lib
     fn print_metadata(&self);
@@ -35,6 +46,8 @@ struct FileMetadata {
     name: String,
     size: u32,
     filetype: String,
+    created_date: u32,
+    last_modified_date: u32,
 }
 
 // FileData
@@ -58,7 +71,7 @@ impl File for FileObject {
 
     // return true if file is valid
     fn is_valid(&self) -> bool {
-        true
+        &self.metadata.filetype == VALID_FILETYPE
     }
 
     // validate file
@@ -66,33 +79,30 @@ impl File for FileObject {
         if !self.is_valid() {
             panic!("File is invalid");
         }
+
+        assert!(true)
     }
 
-    // get path to file
-    fn get_path(&self) -> &String {
-        &self.metadata.path
-    }
-
-    // get size of file
-    fn get_size(&self) -> &u32 {
-        &self.metadata.size
-    }
-
-    // get name of file
-    fn get_name(&self) -> &String {
-        &self.metadata.name
-    }
-
-    // get file's type
-    fn get_type(&self) -> &String {
-        &self.metadata.filetype
+    // get file metadata
+    fn get_metadata(&self) -> &FileMetadata {
+        &self.metadata
     }
 
     // print file metadata such as path, size, type
     fn print_metadata(&self) {
-        println!("Filepath: {}", self.get_path());
-        println!("Filename: {}", self.get_name());
-        println!("Size: {}", self.get_size());
+        let (path, name, size, created_date, last_modified_date) = (
+            &self.metadata.path,
+            &self.metadata.name,
+            &self.metadata.size,
+            &self.metadata.created_date,
+            &self.metadata.last_modified_date,
+        );
+
+        println!("Filepath: {}", path);
+        println!("Filename: {}", name);
+        println!("Size: {}", size);
+        println!("Last Modified: {}", last_modified_date);
+        println!("Created: {}", created_date);
     }
 
     // print head of file data
@@ -136,6 +146,8 @@ fn load_metadata(path: &String) -> FileMetadata {
         name: name.unwrap(),
         size: 0,
         filetype: filetype.unwrap(),
+        created_date: 0,
+        last_modified_date: 0,
     }
 }
 
@@ -157,9 +169,11 @@ mod tests {
         let path = "../testing/test_data.csv".to_string();
         let file = FileObject::new(&path);
 
-        assert_eq!(*file.get_name(), "test_data.csv");
-        assert_eq!(*file.get_size(), 0);
-        assert_eq!(*file.get_path(), path);
+        let metadata = file.get_metadata();
+
+        assert_eq!(metadata.name, "test_data.csv");
+        assert_eq!(metadata.size, 0);
+        assert_eq!(metadata.path, path);
         assert!(file.is_valid());
     }
 }
