@@ -20,6 +20,7 @@ trait File {
     fn is_valid(&self) -> bool;
     fn validate(&self);
     fn get_metadata(&self) -> &FileMetadata;
+    fn get_data(&self) -> &Vec<String>;
 
     // TODO: display lib
     fn print_metadata(&self);
@@ -109,6 +110,11 @@ impl File for FileObject {
     fn print_head(&self) {
         println!("Head: {:?}", &self.data.data[0..5]);
     }
+
+    // get data from file
+    fn get_data(&self) -> &Vec<String> {
+        &self.data.data
+    }
 }
 
 // parses target filename from path
@@ -151,6 +157,12 @@ fn load_metadata(path: &String) -> FileMetadata {
     }
 }
 
+impl FileData<String> {
+    pub fn _get_data(&self) -> &Vec<String> {
+        &self.data
+    }
+}
+
 // generate file data from a target filepath
 fn load_data(path: &String) -> FileData<String> {
     let contents =
@@ -159,13 +171,12 @@ fn load_data(path: &String) -> FileData<String> {
 
     FileData { data }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_fake_file() {
+    fn test_file() {
         let path = "../testing/test_data.csv".to_string();
         let file = FileObject::new(&path);
 
