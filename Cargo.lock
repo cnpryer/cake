@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "cake"
+name = "cake_cli"
 version = "0.1.0"
 dependencies = [
  "cake_lib",
