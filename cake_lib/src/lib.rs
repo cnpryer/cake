@@ -6,7 +6,29 @@
 pub mod file;
 pub mod frame;
 
+use file::File;
+use frame::Frame;
+
 #[allow(dead_code)]
-fn read_csv() -> frame::DataFrame {
-    todo!()
+// read csv to dataframe from path ref
+fn read_csv(path: &String) -> frame::DataFrame {
+    let obj = file::FileObject::new(path);
+    let data = obj.get_data();
+    let df = frame::DataFrame::new(&data);
+
+    df
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_solution() {
+        let path = "../testing/test_data.csv".to_string();
+        let df = read_csv(&path);
+
+        assert_eq!(df.len, 3);
+        assert_eq!(df.width, 3);
+    }
 }

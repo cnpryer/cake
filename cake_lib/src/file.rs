@@ -11,11 +11,12 @@
 //
 // Compatible *filetypes*: csv
 use std::fs;
+use std::io::{self, BufRead};
 
 const VALID_FILETYPE: &str = "csv";
 
 // The File
-trait File {
+pub trait File {
     fn new(path: &String) -> FileObject;
     fn is_valid(&self) -> bool;
     fn validate(&self);
@@ -42,7 +43,7 @@ pub struct FileObject {
 // name (String): Filename
 // size (String): Stored file size
 // filetype (String): Type of file (i.e "csv")
-struct FileMetadata {
+pub struct FileMetadata {
     path: String,
     name: String,
     size: u32,
@@ -54,7 +55,7 @@ struct FileMetadata {
 // FileData
 //
 // data (Vec<String>): Loaded file data. TODO: move away from current data types.
-struct FileData<String> {
+pub struct FileData<String> {
     data: Vec<String>,
 }
 
@@ -165,12 +166,15 @@ impl FileData<String> {
 
 // generate file data from a target filepath
 fn load_data(path: &String) -> FileData<String> {
-    let contents =
-        fs::read_to_string(path.as_str()).expect("Something went wrong reading the file");
-    let data = contents.split("/n").map(|s| s.to_string()).collect();
+    let file = fs::File::open(path).unwrap();
+    let data = io::BufReader::new(file)
+        .lines()
+        .map(|x| x.unwrap().to_string())
+        .collect();
 
     FileData { data }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;

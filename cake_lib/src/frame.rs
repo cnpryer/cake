@@ -12,7 +12,7 @@
 //
 // width() -> usize
 // count of columns
-trait Frame {
+pub trait Frame {
     fn new(data: &Vec<String>) -> DataFrame;
     fn get_header(&self) -> &Vec<String>;
     fn get_rows(&self) -> &Vec<Vec<String>>;
@@ -32,7 +32,7 @@ impl Frame for DataFrame {
         if data.len() < 1 {
             return DataFrame {
                 header: Vec::new(),
-                rows: rows,
+                rows,
                 len: 0,
                 width: 0,
             };
